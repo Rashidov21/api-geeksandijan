@@ -66,7 +66,7 @@ headers: {
 
 **Endpoint:** `GET /api/courses/`
 
-**Description:** Retrieve a list of all courses with their details.
+**Description:** Retrieve a list of all courses with related information.
 
 **Access:** Public (no authentication required)
 
@@ -81,48 +81,27 @@ GET /api/courses/
   {
     "id": 1,
     "title": "Python Fundamentals",
-    "description": "Learn Python programming from scratch. This comprehensive course covers...",
-    "for_who": "beginners",
+    "description": "Learn Python programming from scratch...",
+    "for_who_list": [
+      { "id": 10, "for_who": "Beginners" },
+      { "id": 11, "for_who": "Students" }
+    ],
+    "pluses_list": [
+      { "id": 5, "plus": "Mentor", "image": "/media/pluses/mentor.png", "created_at": "2025-01-01T10:00:00Z", "updated_at": "2025-01-01T10:00:00Z" },
+      { "id": 6, "plus": "Certificate", "image": null, "created_at": "2025-01-01T10:00:00Z", "updated_at": "2025-01-01T10:00:00Z" }
+    ],
+    "faqs": [
+      { "id": 3, "question": "What will I learn?", "answer": "Python basics, data structures, OOP", "created_at": "2025-01-01T10:00:00Z", "updated_at": "2025-01-01T10:00:00Z" }
+    ],
     "details": {
       "pluses": ["mentor", "project", "team", "certificate"],
-      "inthis_course": [
-        {
-          "question": "What will I learn?",
-          "answer": "Python basics, data structures, functions, and object-oriented programming"
-        },
-        {
-          "question": "How long is the course?",
-          "answer": "3 months with 2 sessions per week"
-        }
-      ]
+      "inthis_course": [ { "question": "Duration?", "answer": "3 months" } ]
     },
-    "created_at": "2024-01-15T10:30:00Z",
-    "updated_at": "2024-01-15T10:30:00Z"
-  },
-  {
-    "id": 2,
-    "title": "Advanced Web Development",
-    "description": "Master React, Next.js, and modern web development...",
-    "for_who": "professionals",
-    "details": {
-      "pluses": ["mentor", "project", "team", "certificate"],
-      "inthis_course": [
-        {
-          "question": "Prerequisites?",
-          "answer": "Basic knowledge of HTML, CSS, and JavaScript"
-        }
-      ]
-    },
-    "created_at": "2024-01-20T14:00:00Z",
-    "updated_at": "2024-01-20T14:00:00Z"
+    "created_at": "2025-01-01T10:00:00Z",
+    "updated_at": "2025-01-01T10:00:00Z"
   }
 ]
 ```
-
-**Possible Values for `for_who`:**
-- `"beginners"` - For beginners
-- `"students"` - For students
-- `"professionals"` - For professionals
 
 ---
 
@@ -148,18 +127,15 @@ GET /api/courses/1/
   "id": 1,
   "title": "Python Fundamentals",
   "description": "Learn Python programming from scratch...",
-  "for_who": "beginners",
+  "for_who_list": [ { "id": 10, "for_who": "Beginners" } ],
+  "pluses_list": [ { "id": 5, "plus": "Mentor", "image": null, "created_at": "2025-01-01T10:00:00Z", "updated_at": "2025-01-01T10:00:00Z" } ],
+  "faqs": [ { "id": 3, "question": "Duration?", "answer": "3 months", "created_at": "2025-01-01T10:00:00Z", "updated_at": "2025-01-01T10:00:00Z" } ],
   "details": {
     "pluses": ["mentor", "project", "team", "certificate"],
-    "inthis_course": [
-      {
-        "question": "What will I learn?",
-        "answer": "Python basics, data structures, functions, and OOP"
-      }
-    ]
+    "inthis_course": [ { "question": "What will I learn?", "answer": "Python basics, data structures, OOP" } ]
   },
-  "created_at": "2024-01-15T10:30:00Z",
-  "updated_at": "2024-01-15T10:30:00Z"
+  "created_at": "2025-01-01T10:00:00Z",
+  "updated_at": "2025-01-01T10:00:00Z"
 }
 ```
 
@@ -633,22 +609,37 @@ export default function CourseLeadForm() {
 
 ### Course Types
 ```typescript
-export type TargetAudience = 'beginners' | 'students' | 'professionals';
+export interface ForWhoItem { id: number; for_who: string }
 
-export interface CourseDetail {
+export interface CoursePlusItem {
+  id: number;
+  plus: string;
+  image: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseFAQItem {
+  id: number;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseDetailLegacy {
   pluses: string[];
-  inthis_course: Array<{
-    question: string;
-    answer: string;
-  }>;
+  inthis_course: Array<{ question: string; answer: string }>;
 }
 
 export interface Course {
   id: number;
   title: string;
   description: string;
-  for_who: TargetAudience;
-  details: CourseDetail | null;
+  for_who_list: ForWhoItem[];
+  pluses_list: CoursePlusItem[];
+  faqs: CourseFAQItem[];
+  details: CourseDetailLegacy | null;
   created_at: string;
   updated_at: string;
 }
@@ -728,5 +719,5 @@ This API is proprietary software for Geeks Andijan.
 
 ---
 
-**Last Updated:** 2024-01-25
+**Last Updated:** 2025-11-03
 

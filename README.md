@@ -5,7 +5,7 @@ A Django REST Framework API for managing Geeks Andijan courses, built with clean
 ## 🚀 Features
 
 - RESTful API endpoints for courses and leads
-- Nested serializers for course details
+- Nested serializers for related course info (audience, pluses, FAQs, legacy details)
 - CORS enabled for frontend integration
 - Production-ready configuration
 - Clean code following PEP8 and Django best practices
@@ -60,8 +60,8 @@ A Django REST Framework API for managing Geeks Andijan courses, built with clean
 
 ### Courses
 
-- **GET** `/api/courses/` - List all courses
-- **GET** `/api/courses/<id>/` - Get single course with details
+- **GET** `/api/courses/` - List all courses (with `for_who_list`, `pluses_list`, `faqs`, `details`)
+- **GET** `/api/courses/<id>/` - Get single course with related info
 
 ### Leads
 
@@ -81,16 +81,15 @@ Response:
     "id": 1,
     "title": "Python Fundamentals",
     "description": "Learn Python from scratch",
-    "for_who": "beginners",
+    "for_who_list": [ { "id": 10, "for_who": "Beginners" } ],
+    "pluses_list": [ { "id": 5, "plus": "Mentor", "image": null, "created_at": "2025-01-01T10:00:00Z", "updated_at": "2025-01-01T10:00:00Z" } ],
+    "faqs": [ { "id": 3, "question": "Duration?", "answer": "3 months", "created_at": "2025-01-01T10:00:00Z", "updated_at": "2025-01-01T10:00:00Z" } ],
     "details": {
       "pluses": ["mentor", "project", "team", "certificate"],
-      "inthis_course": [
-        {"question": "What will I learn?", "answer": "Python basics"},
-        {"question": "Duration?", "answer": "3 months"}
-      ]
+      "inthis_course": [ {"question": "What will I learn?", "answer": "Python basics"} ]
     },
-    "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-01-01T00:00:00Z"
+    "created_at": "2025-01-01T10:00:00Z",
+    "updated_at": "2025-01-01T10:00:00Z"
   }
 ]
 ```
@@ -318,17 +317,16 @@ You can create sample data through the Django admin panel or Django shell:
 ```python
 python manage.py shell
 
-from courses.models import Course, CourseDetail
+from courses.models import Course, CourseDetail, ForWho, CoursePluses, CourseFAQ
 
 # Create a course
 course = Course.objects.create(
     title="Python Fundamentals",
     description="Learn Python from scratch",
-    for_who="beginners"
 )
 
-# Create course details
-detail = CourseDetail.objects.create(
+# Optional legacy details
+CourseDetail.objects.create(
     course=course,
     pluses=["mentor", "project", "team", "certificate"],
     inthis_course=[
@@ -336,6 +334,11 @@ detail = CourseDetail.objects.create(
         {"question": "Duration?", "answer": "3 months"}
     ]
 )
+
+# New related models
+ForWho.objects.create(course=course, for_who="Beginners")
+CoursePluses.objects.create(course=course, plus="Mentor")
+CourseFAQ.objects.create(course=course, question="Duration?", answer="3 months")
 ```
 
 ## 📄 License
