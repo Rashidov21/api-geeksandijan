@@ -2,10 +2,46 @@
 Serializers for the courses app.
 
 This module defines DRF serializers for Course, CourseDetail, and CourseLead models.
-CourseSerializer includes CourseDetail as a nested serializer (read-only.
+CourseSerializer includes nested serializers for related models (read-only).
 """
 from rest_framework import serializers
-from .models import Course, CourseDetail, CourseLead
+from .models import Course, CourseDetail, CourseLead, ForWho, CoursePluses, CourseFAQ
+
+
+class ForWhoSerializer(serializers.ModelSerializer):
+    """
+    Serializer for ForWho model.
+
+    Used as a nested serializer within CourseSerializer.
+    """
+    class Meta:
+        model = ForWho
+        fields = ['id', 'for_who']
+        read_only_fields = ['id']
+
+
+class CoursePlusesSerializer(serializers.ModelSerializer):
+    """
+    Serializer for CoursePluses model.
+
+    Used as a nested serializer within CourseSerializer.
+    """
+    class Meta:
+        model = CoursePluses
+        fields = ['id', 'plus', 'image', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class CourseFAQSerializer(serializers.ModelSerializer):
+    """
+    Serializer for CourseFAQ model.
+
+    Used as a nested serializer within CourseSerializer.
+    """
+    class Meta:
+        model = CourseFAQ
+        fields = ['id', 'question', 'answer', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
@@ -24,14 +60,20 @@ class CourseSerializer(serializers.ModelSerializer):
     """
     Serializer for Course model.
 
-    Includes CourseDetail as a nested serializer (read-only).
-    The details field will only be populated if CourseDetail exists for the course.
+    Includes nested serializers for related models (read-only):
+    - ForWho: target audience for the course
+    - CoursePluses: advantages of the course
+    - CourseFAQ: frequently asked questions
+    - CourseDetail: legacy details (if available)
     """
+    for_who_list = ForWhoSerializer(many=True, read_only=True, source='forwho_set')
+    pluses_list = CoursePlusesSerializer(many=True, read_only=True, source='coursepluses_set')
+    faqs = CourseFAQSerializer(many=True, read_only=True, source='coursefaq_set')
     details = CourseDetailSerializer(read_only=True)
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'for_who', 'details', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'description', 'for_who_list', 'pluses_list', 'faqs', 'details', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 

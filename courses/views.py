@@ -17,9 +17,10 @@ class CourseListView(generics.ListAPIView):
     ListAPIView for retrieving all courses.
 
     Returns a list of all courses with their details (if available).
-    Each course includes nested CourseDetail information.
+    Each course includes nested information from ForWho, CoursePluses,
+    CourseFAQ, and CourseDetail.
     """
-    queryset = Course.objects.all().select_related('details')
+    queryset = Course.objects.all().prefetch_related('forwho_set', 'coursepluses_set', 'coursefaq_set').select_related('details')
     serializer_class = CourseSerializer
 
 
@@ -28,9 +29,9 @@ class CourseDetailView(generics.RetrieveAPIView):
     RetrieveAPIView for getting a single course with details.
 
     Returns a single course by ID with all its details including
-    nested CourseDetail information.
+    nested information from ForWho, CoursePluses, CourseFAQ, and CourseDetail.
     """
-    queryset = Course.objects.all().select_related('details')
+    queryset = Course.objects.all().prefetch_related('forwho_set', 'coursepluses_set', 'coursefaq_set').select_related('details')
     serializer_class = CourseSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'id'

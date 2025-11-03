@@ -135,3 +135,27 @@ class CoursePluses(models.Model):
 
     def __str__(self):
         return f"Pluses for {self.course.title}"        
+    
+
+class CourseFAQ(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        help_text="Related course"
+    )
+    question = models.CharField(
+        max_length=500,
+        help_text="Question about course content"
+    )
+    answer = models.TextField(
+        help_text="Answer to the question"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Course FAQ'
+        verbose_name_plural = 'Course FAQs'
+
+    def __str__(self):
+        return f"FAQ for {self.course.title}"
