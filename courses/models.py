@@ -28,11 +28,7 @@ class Course(models.Model):
     description = models.TextField(
         help_text="Detailed course description"
     )
-    for_who = models.CharField(
-        max_length=20,
-        choices=TARGET_AUDIENCE_CHOICES,
-        help_text="Target audience for this course"
-    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -105,3 +101,37 @@ class CourseLead(models.Model):
     def __str__(self):
         return f"{self.fullname} - {self.phone}"
 
+class ForWho(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        help_text="Related course"
+    )
+    for_who = models.CharField(
+        max_length=500,
+        help_text="Target audience for this course"
+    )
+    
+    def __str__(self):
+        return self.course.title
+
+class CoursePluses(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        help_text="Related course"
+    )
+    plus = models.CharField(
+        max_length=500,
+        help_text="List of course advantages (e.g., ['mentor', 'project', 'team', 'certificate'])"
+    )
+    image = models.ImageField(upload_to='pluses/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Course Pluses'
+        verbose_name_plural = 'Course Pluses'
+
+    def __str__(self):
+        return f"Pluses for {self.course.title}"        
