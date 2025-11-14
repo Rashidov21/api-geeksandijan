@@ -41,7 +41,7 @@ class CourseLeadCreateView(generics.CreateAPIView):
     """
     CreateAPIView for posting new course leads.
 
-    Accepts POST requests with fullname, age, and phone to create
+    Accepts POST requests with course, fullname, age, and phone to create
     a new course lead. Returns the created lead with status 201.
     This endpoint is publicly accessible (AllowAny).
     """
@@ -71,7 +71,7 @@ class CourseLeadListView(generics.ListAPIView):
     Returns a list of all course leads. This endpoint is restricted
     to admin users only (IsAdminUser). Regular users will get 403 Forbidden.
     """
-    queryset = CourseLead.objects.all()
+    queryset = CourseLead.objects.all().select_related('course')
     serializer_class = CourseLeadSerializer
     permission_classes = [IsAdminUser]  # Only staff/admin users can access
 

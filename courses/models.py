@@ -78,8 +78,14 @@ class CourseLead(models.Model):
     Lead model for course inquiries.
 
     Stores information about potential students who are interested
-    in courses (name, age, phone number).
+    in courses (name, age, phone number, and which course they're booking for).
     """
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='leads',
+        help_text="Course the student is booking for"
+    )
     fullname = models.CharField(
         max_length=100,
         help_text="Full name of the lead"

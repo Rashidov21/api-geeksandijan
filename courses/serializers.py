@@ -85,7 +85,7 @@ class CourseLeadSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = CourseLead
-        fields = ['id', 'fullname', 'age', 'phone', 'created_at']
+        fields = ['id', 'course', 'fullname', 'age', 'phone', 'created_at']
         read_only_fields = ['id', 'created_at']
 
     def validate_phone(self, value):
