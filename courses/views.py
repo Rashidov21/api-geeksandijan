@@ -30,11 +30,27 @@ class CourseDetailView(generics.RetrieveAPIView):
 
     Returns a single course by ID with all its details including
     nested information from ForWho, CoursePluses, CourseFAQ, and CourseDetail.
+    
+    This endpoint is publicly accessible and returns comprehensive course information
+    including target audience, pluses, FAQs, and legacy course details.
     """
-    queryset = Course.objects.all().prefetch_related('forwho_set', 'coursepluses_set', 'coursefaq_set').select_related('details')
+    queryset = Course.objects.all().prefetch_related(
+        'forwho_set', 
+        'coursepluses_set', 
+        'coursefaq_set'
+    ).select_related('details')
     serializer_class = CourseSerializer
+    permission_classes = [AllowAny]  # Public access
     lookup_field = 'id'
     lookup_url_kwarg = 'id'
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Override retrieve method to provide custom response handling.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CourseLeadCreateView(generics.CreateAPIView):
